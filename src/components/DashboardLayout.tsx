@@ -1,9 +1,8 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { MoveUp, MoveDown, Zap, Activity } from "lucide-react";
+import { MoveUp, MoveDown } from "lucide-react";
 import clsx from "clsx";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardLayoutProps {
    children: ReactNode;

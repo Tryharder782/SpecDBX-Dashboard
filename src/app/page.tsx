@@ -70,7 +70,7 @@ export default function Home() {
   );
 }
 
-import { motion, AnimatePresence, useSpring, useTransform } from "framer-motion";
+import { motion, useSpring, useTransform } from "framer-motion";
 
 function AnimatedNumber({ value }: { value: string }) {
   const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''));
