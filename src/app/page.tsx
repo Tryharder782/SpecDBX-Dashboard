@@ -1,101 +1,119 @@
-import Image from "next/image";
+"use client";
+
+import React from "react";
+
+import { useMarketData } from "@/hooks/useMarketData";
+import { DashboardLayout } from "@/components/DashboardLayout";
+import { GammaExposureChart } from "@/components/charts/GammaExposureChart";
+import { FlowDominanceGauge } from "@/components/charts/FlowDominanceGauge";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const { spotPrice, gammaExposure, flowDominance, status, regime, timeframe, changeTimeframe } = useMarketData();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  return (
+    <DashboardLayout spotPrice={spotPrice} status={status} regime={regime}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        {/* Main Chart Section (Gamma) */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* <div className="bg-slate-900/40 p-1 rounded-t flex items-center justify-between px-3 border-b border-slate-800"> // REMOVED HEADER as it's now internal to chart
+            <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">Analysis // GEX</span>
+          </div> */}
+          <GammaExposureChart
+            data={gammaExposure}
+            spotPrice={spotPrice}
+            timeframe={timeframe}
+            onChangeTimeframe={changeTimeframe}
+          />
+
+          {/* Placeholder for secondary info or volume */}
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <MetricCard label="Net GEX" value="+$4.2B" trend="bullish" />
+            <MetricCard label="Zero Gamma" value="4815" />
+            <MetricCard label="Vol Risk" value="High" trend="bearish" />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Side Panel (Flow & Stats) */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Flow Gauge */}
+          <div className="space-y-4">
+            <div className="bg-slate-900/40 p-1 rounded-t flex items-center justify-between px-3 border-b border-slate-800">
+              <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">Sentiment // Flow</span>
+            </div>
+            <FlowDominanceGauge flowDominance={flowDominance} />
+          </div>
+
+          {/* Additional Data List */}
+          <div className="bg-slate-900/20 border border-slate-800 rounded p-4">
+            <h4 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Market Internals</h4>
+            <div className="space-y-3 font-mono text-sm">
+              <Row label="VIX" value="13.45" change="+1.2%" changeColor="text-bullish" />
+              <Row label="PC Ratio" value="0.85" change="-0.02" changeColor="text-bearish" />
+              <Row label="Dark Pool" value="42%" />
+              <Row label="Gamma Flip" value="4780" />
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/30 rounded p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+              <h4 className="text-indigo-300 text-xs font-bold uppercase tracking-wider">AI Signal</h4>
+            </div>
+            <p className="text-sm text-indigo-100/80 leading-relaxed">
+              Bullish divergence detected on flow dominance. Gamma support strengthening at 4800.
+            </p>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
+
+import { motion, AnimatePresence, useSpring, useTransform } from "framer-motion";
+
+function AnimatedNumber({ value }: { value: string }) {
+  const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''));
+  const suffix = value.replace(/[0-9.-]/g, '');
+  const spring = useSpring(numericValue, { stiffness: 50, damping: 15 });
+  const display = useTransform(spring, (latest) =>
+    (latest < 0 ? '-' : '') + (suffix.startsWith('$') ? '$' : '') + Math.abs(latest).toFixed(2) + (suffix.endsWith('%') || suffix.endsWith('B') ? suffix.replace('$', '') : '')
+  );
+
+  React.useEffect(() => {
+    spring.set(numericValue);
+  }, [numericValue, spring]);
+
+  return <motion.span>{display}</motion.span>;
+}
+
+function MetricCard({ label, value, trend }: { label: string, value: string, trend?: "bullish" | "bearish" }) {
+  // Check if it's a numeric value we can animate
+  const isNumeric = /[0-9]/.test(value) && !value.includes(':');
+
+  return (
+    <div className="bg-slate-900/30 border border-slate-800 p-3 rounded flex flex-col items-center justify-center hover:bg-slate-800/50 transition-colors group overflow-hidden">
+      <span className="text-xs text-slate-500 uppercase tracking-wider mb-1 group-hover:text-slate-300 transition-colors">{label}</span>
+      <div className={clsx(
+        "text-lg font-mono font-bold",
+        trend === "bullish" ? "text-bullish" : trend === "bearish" ? "text-bearish" : "text-white"
+      )}>
+        {isNumeric ? <AnimatedNumber value={value} /> : value}
+      </div>
+    </div>
+  )
+}
+
+function Row({ label, value, change, changeColor }: { label: string, value: string, change?: string, changeColor?: string }) {
+  return (
+    <div className="flex justify-between items-center group">
+      <span className="text-slate-500 group-hover:text-slate-400 transition-colors">{label}</span>
+      <div className="flex gap-3">
+        <span className="text-white">{value}</span>
+        {change && <span className={changeColor || "text-slate-400"}>{change}</span>}
+      </div>
+    </div>
+  )
+}
+
+import clsx from "clsx";
