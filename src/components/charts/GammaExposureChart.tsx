@@ -22,7 +22,7 @@ interface GammaChartProps {
    onChangeTimeframe?: (tf: "1D" | "1W" | "1M") => void;
 }
 
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string | number }) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value: number; name: string }[]; label?: string | number }) => {
    if (active && payload && payload.length) {
       return (
          <div className="bg-black border border-slate-800 p-2 rounded shadow-2xl min-w-[200px]">
@@ -63,7 +63,7 @@ export function GammaExposureChart({ data, spotPrice, timeframe = "1D", onChange
    // 2. Stable data for the Brush (it only cares about the strikes/ruler)
    const brushData = useMemo(() => {
       return data.map(d => ({ strike: d.strike }));
-   }, [data, timeframe]); // Only regenerate if data or timeframe changes
+   }, [data]); // Only regenerate if data changes
 
    // 3. Reset zoom when timeframe changes
    useEffect(() => {
