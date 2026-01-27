@@ -63,7 +63,8 @@ export function GammaExposureChart({ data, spotPrice, timeframe = "1D", onChange
    // 2. Stable data for the Brush (it only cares about the strikes/ruler)
    const brushData = useMemo(() => {
       return data.map(d => ({ strike: d.strike }));
-   }, [data]); // Only regenerate if data changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [data.length, timeframe]); // Only regenerate if length or timeframe changes
 
    // 3. Reset zoom when timeframe changes
    useEffect(() => {
