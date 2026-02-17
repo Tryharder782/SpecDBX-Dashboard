@@ -28,9 +28,9 @@ export default function Home() {
 
           {/* Placeholder for secondary info or volume */}
           <div className="grid grid-cols-3 gap-4 mt-4">
-            <MetricCard label="Net GEX" value="+$4.2B" trend="bullish" />
-            <MetricCard label="Zero Gamma" value="4815" />
-            <MetricCard label="Vol Risk" value="High" trend="bearish" />
+            <MetricCard label="Alt/BTC Spread" value="+12.40%" trend="bullish" />
+            <MetricCard label="BTC Dominance" value="51.8%" />
+            <MetricCard label="Rotation Risk" value="Medium" trend="bearish" />
           </div>
         </div>
 
@@ -39,7 +39,7 @@ export default function Home() {
           {/* Flow Gauge */}
           <div className="space-y-4">
             <div className="bg-slate-900/40 p-1 rounded-t flex items-center justify-between px-3 border-b border-slate-800">
-              <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">Sentiment // Flow</span>
+              <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">Sentiment // Season</span>
             </div>
             <FlowDominanceGauge flowDominance={flowDominance} />
           </div>
@@ -48,10 +48,10 @@ export default function Home() {
           <div className="bg-slate-900/20 border border-slate-800 rounded p-4">
             <h4 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Market Internals</h4>
             <div className="space-y-3 font-mono text-sm">
-              <Row label="VIX" value="13.45" change="+1.2%" changeColor="text-bullish" />
-              <Row label="PC Ratio" value="0.85" change="-0.02" changeColor="text-bearish" />
-              <Row label="Dark Pool" value="42%" />
-              <Row label="Gamma Flip" value="4780" />
+              <Row label="BTC.D" value="51.8%" change="-0.8%" changeColor="text-bullish" />
+              <Row label="TOTAL3" value="$915B" change="+2.4%" changeColor="text-bullish" />
+              <Row label="ETH/BTC" value="0.061" change="+1.1%" changeColor="text-bullish" />
+              <Row label="Top100 > BTC" value="75/100" />
             </div>
           </div>
 
@@ -61,7 +61,7 @@ export default function Home() {
               <h4 className="text-indigo-300 text-xs font-bold uppercase tracking-wider">AI Signal</h4>
             </div>
             <p className="text-sm text-indigo-100/80 leading-relaxed">
-              Bullish divergence detected on flow dominance. Gamma support strengthening at 4800.
+              Altcoin momentum is strengthening across 30-90 day windows while BTC dominance cools.
             </p>
           </div>
         </div>

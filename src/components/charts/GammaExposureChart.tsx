@@ -18,8 +18,8 @@ import clsx from "clsx";
 interface GammaChartProps {
    data: GammaLevel[];
    spotPrice: number;
-   timeframe?: "1D" | "1W" | "1M";
-   onChangeTimeframe?: (tf: "1D" | "1W" | "1M") => void;
+   timeframe?: "30D" | "60D" | "90D";
+   onChangeTimeframe?: (tf: "30D" | "60D" | "90D") => void;
 }
 
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value: number; name: string }[]; label?: string | number }) => {
@@ -27,24 +27,24 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
       return (
          <div className="bg-black border border-slate-800 p-2 rounded shadow-2xl min-w-[200px]">
             <div className="flex justify-between items-center mb-2 border-b border-slate-800 pb-1">
-               <span className="text-slate-500 font-mono text-xs uppercase">Strike</span>
+               <span className="text-slate-500 font-mono text-xs uppercase">Day</span>
                <span className="text-white font-mono font-bold text-sm">{label}</span>
             </div>
             <div className="space-y-1">
                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-emerald-400">CALL GEX</span>
-                  <span className="text-white">{(payload[0].value).toFixed(2)}B</span>
+                  <span className="text-emerald-400">ALTCOIN OUTPERFORMANCE</span>
+                  <span className="text-white">{(payload[0].value).toFixed(2)}%</span>
                </div>
                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-rose-500">PUT GEX</span>
-                  <span className="text-white">{(payload[1].value).toFixed(2)}B</span>
+                  <span className="text-rose-500">BITCOIN DOMINANCE</span>
+                  <span className="text-white">{Math.abs(payload[1].value).toFixed(2)}%</span>
                </div>
                <div className="flex justify-between text-xs font-mono pt-1 mt-1 border-t border-slate-900">
-                  <span className="text-slate-400">NET GEX</span>
+                  <span className="text-slate-400">SPREAD</span>
                   <span className={clsx(
                      (payload[0].value + payload[1].value) > 0 ? "text-emerald-400" : "text-rose-500"
                   )}>
-                     ${(payload[0].value + payload[1].value).toFixed(2)}B
+                     {(payload[0].value + payload[1].value).toFixed(2)}%
                   </span>
                </div>
             </div>
@@ -56,7 +56,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 
 import { motion, AnimatePresence } from "framer-motion";
 
-export function GammaExposureChart({ data, spotPrice, timeframe = "1D", onChangeTimeframe }: GammaChartProps) {
+export function GammaExposureChart({ data, spotPrice, timeframe = "30D", onChangeTimeframe }: GammaChartProps) {
    // 1. State for the zoom range (indices)
    const [range, setRange] = useState<{ start: number; end: number }>({ start: 0, end: data.length - 1 });
 
@@ -81,11 +81,11 @@ export function GammaExposureChart({ data, spotPrice, timeframe = "1D", onChange
          {/* Header */}
          <div className="flex justify-between items-start mb-2 z-10">
             <div>
-               <h3 className="text-slate-200 text-sm font-bold tracking-wider uppercase">Gamma Exposure Profile</h3>
-               <p className="text-xs text-slate-600 font-mono">Real-time Notional ($B)</p>
+               <h3 className="text-slate-200 text-sm font-bold tracking-wider uppercase">Altcoin Season Index</h3>
+               <p className="text-xs text-slate-600 font-mono">Altcoin Season Index: Altcoins vs BTC</p>
             </div>
             <div className="flex bg-slate-900 rounded p-0.5 border border-slate-800">
-               {(["1D", "1W", "1M"] as const).map((tf) => (
+               {(["30D", "60D", "90D"] as const).map((tf) => (
                   <button
                      key={tf}
                      onClick={() => onChangeTimeframe?.(tf)}
@@ -136,17 +136,20 @@ export function GammaExposureChart({ data, spotPrice, timeframe = "1D", onChange
                            dataKey="strike"
                            stroke="#334155"
                            tick={{ fill: "#64748b", fontSize: 10, fontFamily: "monospace" }}
+                           tickFormatter={(val) => `D${val}`}
                            tickLine={false}
                            axisLine={false}
                            minTickGap={10}
+                           label={{ value: "Days", position: "insideBottom", offset: -4, fill: "#64748b", fontSize: 10 }}
                         />
                         <YAxis
                            stroke="#334155"
                            tick={{ fill: "#64748b", fontSize: 10, fontFamily: "monospace" }}
-                           tickFormatter={(val) => `$${val}B`}
+                           tickFormatter={(val) => `${val}%`}
                            axisLine={false}
                            tickLine={false}
                            width={40}
+                           label={{ value: "Performance %", angle: -90, position: "insideLeft", fill: "#64748b", fontSize: 10 }}
                         />
                         <Tooltip
                            content={<CustomTooltip />}
@@ -157,12 +160,12 @@ export function GammaExposureChart({ data, spotPrice, timeframe = "1D", onChange
                         <ReferenceLine y={0} stroke="#1e293b" strokeWidth={1} />
 
                         <ReferenceLine
-                           x={Math.round(spotPrice / 10) * 10}
+                           x={displayedData[Math.max(displayedData.length - 1, 0)]?.strike}
                            stroke="#f59e0b"
                            strokeDasharray="4 4"
                            strokeWidth={2}
                            label={{
-                              value: "SPOT",
+                              value: `ASI ${spotPrice.toFixed(1)}`,
                               position: 'insideTop',
                               fill: '#f59e0b',
                               fontSize: 10,

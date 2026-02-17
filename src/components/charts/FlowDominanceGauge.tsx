@@ -5,14 +5,14 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import clsx from "clsx";
 
 interface FlowGaugeProps {
-   flowDominance: number; // 0-100 (Call %)
+   flowDominance: number; // 0-100 (Altcoin Season %)
 }
 
 export function FlowDominanceGauge({ flowDominance }: FlowGaugeProps) {
-   // Data for the gauge: [Put %, Call %]
+   // Data for the gauge: [Bitcoin Season %, Altcoin Season %]
    const data = [
-      { name: "Bearish", value: 100 - flowDominance },
-      { name: "Bullish", value: flowDominance },
+      { name: "Bitcoin Season", value: 100 - flowDominance },
+      { name: "Altcoin Season", value: flowDominance },
    ];
 
    const COLORS = ["#f43f5e", "#34d399"];
@@ -26,8 +26,8 @@ export function FlowDominanceGauge({ flowDominance }: FlowGaugeProps) {
    return (
       <div className="w-full h-[300px] bg-slate-900/50 border border-slate-800 rounded p-4 flex flex-col items-center justify-center relative">
          <div className="absolute top-4 left-4">
-            <h3 className="text-slate-400 text-sm font-semibold tracking-wider uppercase">Net Flow</h3>
-            <p className="text-xs text-slate-600 font-mono">Dominance</p>
+            <h3 className="text-slate-400 text-sm font-semibold tracking-wider uppercase">Season Gauge</h3>
+            <p className="text-xs text-slate-600 font-mono">Altcoin vs Bitcoin</p>
          </div>
 
          <div className="w-full h-[200px] mt-8 relative">
@@ -64,16 +64,16 @@ export function FlowDominanceGauge({ flowDominance }: FlowGaugeProps) {
                </div>
                <div className={clsx(
                   "text-xs font-mono tracking-widest uppercase font-bold",
-                  flowDominance > 50 ? "text-emerald-400" : "text-rose-500"
+                  flowDominance >= 60 ? "text-emerald-400" : "text-rose-500"
                )}>
-                  {flowDominance > 50 ? "CALLS" : "PUTS"}
+                  {flowDominance >= 60 ? "ALTCOIN SEASON" : "BITCOIN SEASON"}
                </div>
             </div>
          </div>
 
          <div className="flex w-full justify-between px-8 mt-2 text-xs font-mono text-slate-500">
-            <span className="text-rose-500">BEARISH</span>
-            <span className="text-emerald-400">BULLISH</span>
+            <span className="text-rose-500">BITCOIN</span>
+            <span className="text-emerald-400">ALTCOINS</span>
          </div>
       </div>
    );

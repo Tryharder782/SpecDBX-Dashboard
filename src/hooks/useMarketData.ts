@@ -13,53 +13,47 @@ export type MarketData = {
    gammaExposure: GammaLevel[];
    flowDominance: number; // 0-100, >50 Call heavy
    status: "OPEN" | "CLOSED" | "HALTED";
-   regime: "VOLATILE" | "TRENDING" | "RANGING";
-   timeframe: "1D" | "1W" | "1M";
+   regime: "ALTCOIN_SEASON" | "BITCOIN_SEASON" | "TRANSITION";
+   timeframe: "30D" | "60D" | "90D";
 };
 
-const BASE_STRIKE = 4800;
+function generateGamma(timeframe: "30D" | "60D" | "90D"): GammaLevel[] {
+   let count = 30;
+   let valueMult = 6;
 
-function generateGamma(timeframe: "1D" | "1W" | "1M"): GammaLevel[] {
-   let step = 5;
-   let valueMult = 3; // Max $B
-
-   if (timeframe === "1W") {
-      step = 10;
+   if (timeframe === "60D") {
+      count = 60;
+      valueMult = 9;
+   }
+   if (timeframe === "90D") {
+      count = 90;
       valueMult = 12;
    }
-   if (timeframe === "1M") {
-      step = 25;
-      valueMult = 45;
-   }
-
-   const count = 31; // More bars for a denser "terminal" look
-   const startStrike = Math.floor(BASE_STRIKE / step) * step - (Math.floor(count / 2) * step);
 
    return Array.from({ length: count }, (_, i) => {
-      const strike = startStrike + i * step;
-      // Exponential distribution around center for more "realistic" curve
+      const strike = i + 1;
       const distanceFromCenter = Math.abs(i - Math.floor(count / 2));
       const bellCurve = Math.exp(-(distanceFromCenter ** 2) / (count * 1.5));
 
       return {
          strike,
-         callGamma: (Math.random() * valueMult * bellCurve) + 0.5,
-         putGamma: -((Math.random() * valueMult * bellCurve) + 0.5),
+         callGamma: (Math.random() * valueMult * bellCurve) + 0.2,
+         putGamma: -((Math.random() * valueMult * bellCurve) + 0.2),
       }
    });
 }
 
 export function useMarketData() {
    const [data, setData] = useState<MarketData>({
-      spotPrice: 4800.0,
-      gammaExposure: generateGamma("1D"),
-      flowDominance: 58,
+      spotPrice: 75.0,
+      gammaExposure: generateGamma("30D"),
+      flowDominance: 75,
       status: "OPEN",
-      regime: "VOLATILE",
-      timeframe: "1D",
+      regime: "ALTCOIN_SEASON",
+      timeframe: "30D",
    });
 
-   const changeTimeframe = useCallback((tf: "1D" | "1W" | "1M") => {
+   const changeTimeframe = useCallback((tf: "30D" | "60D" | "90D") => {
       setData(prev => ({
          ...prev,
          timeframe: tf,
@@ -70,9 +64,8 @@ export function useMarketData() {
    useEffect(() => {
       const interval = setInterval(() => {
          setData((prev) => {
-            // Fluctuate price
-            const priceChange = (Math.random() - 0.5) * 2.0;
-            const newPrice = prev.spotPrice + priceChange;
+            const priceChange = (Math.random() - 0.5) * 1.6;
+            const newPrice = Math.max(0, Math.min(100, prev.spotPrice + priceChange));
 
             // Fluctuate Gamma slightly
             const newGamma = prev.gammaExposure.map((g) => ({
@@ -81,15 +74,18 @@ export function useMarketData() {
                putGamma: Math.min(0, g.putGamma + (Math.random() - 0.5) * 0.5),
             }));
 
-            // Fluctuate Flow
             const flowChange = Math.floor((Math.random() - 0.5) * 5);
             const newFlow = Math.min(100, Math.max(0, prev.flowDominance + flowChange));
+
+            const regime: MarketData["regime"] =
+              newFlow >= 60 ? "ALTCOIN_SEASON" : newFlow <= 40 ? "BITCOIN_SEASON" : "TRANSITION";
 
             return {
                ...prev,
                spotPrice: Number(newPrice.toFixed(2)),
                gammaExposure: newGamma,
                flowDominance: newFlow,
+               regime,
             };
          });
       }, 500);

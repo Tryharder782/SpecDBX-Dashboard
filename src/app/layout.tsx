@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "DBX Dashboard",
-  description: "Advanced Options Trading Interface",
+  title: "DBX Altcoin Season Dashboard",
+  description: "Crypto analytics prototype for Altcoin Season Index",
 };
 
 export default function RootLayout({

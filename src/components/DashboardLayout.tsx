@@ -43,15 +43,13 @@ export function DashboardLayout({
                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded flex items-center justify-center font-bold text-white text-xs tracking-tighter shadow-[0_0_15px_rgba(99,102,241,0.5)]">
                         DBX
                      </div>
-                     <span className="text-white font-bold tracking-tight text-lg">
-                        BLU X
-                     </span>
+                     <span className="text-white font-bold tracking-tight text-lg">ALTX</span>
                   </div>
 
                   {/* Ticker */}
                   <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-slate-900 rounded border border-slate-800 text-white cursor-pointer hover:border-slate-700 transition-colors">
-                     <span className="font-mono font-bold text-cyan-400">SPX</span>
-                     <span className="text-xs text-slate-500">S&P 500 Index</span>
+                     <span className="font-mono font-bold text-cyan-400">TOTAL3 / BTC</span>
+                     <span className="text-xs text-slate-500">Altcoins vs Bitcoin</span>
                   </div>
                </div>
 
@@ -72,13 +70,13 @@ export function DashboardLayout({
                         {direction === "up" && <MoveUp className="w-4 h-4 text-bullish animate-bounce" />}
                         {direction === "down" && <MoveDown className="w-4 h-4 text-bearish animate-bounce" />}
                      </div>
-                     <span className="text-xs font-mono text-slate-500">LIVE SPOT</span>
+                     <span className="text-xs font-mono text-slate-500">LIVE ASI SCORE</span>
                   </div>
 
                   {/* Status Badges */}
                   <div className="flex gap-2">
                      <Badge label="MARKET" value={status} active={status === "OPEN"} />
-                     <Badge label="REGIME" value={regime} active={regime === "VOLATILE"} panic={regime === "VOLATILE"} />
+                     <Badge label="REGIME" value={regime} active={regime === "ALTCOIN_SEASON"} panic={regime === "BITCOIN_SEASON"} />
                   </div>
                </div>
             </div>
