@@ -13,6 +13,13 @@ function copyDir(from, to) {
   fs.cpSync(from, to, { recursive: true });
 }
 
+function copyFileIfExists(from, to) {
+  if (exists(from)) {
+    ensureDir(path.dirname(to));
+    fs.copyFileSync(from, to);
+  }
+}
+
 function exists(target) {
   return fs.existsSync(target);
 }
@@ -20,6 +27,9 @@ function exists(target) {
 const nextOut = path.join(".next");
 const publicNextOut = path.join("public", ".next");
 const publicNodeModules = path.join("public", "node_modules");
+const publicPackageJson = path.join("public", "package.json");
+const publicLockfile = path.join("public", "package-lock.json");
+const publicNextConfig = path.join("public", "next.config.mjs");
 const styledJsxSrc = path.join("node_modules", "styled-jsx");
 const styledJsxDst = path.join("public", "node_modules", "styled-jsx");
 
@@ -44,3 +54,7 @@ if (!exists(styledJsxDst) && exists(styledJsxSrc)) {
   copyDir(styledJsxSrc, styledJsxDst);
 }
 
+// Some Vercel project settings are forcing artifact resolution under /public.
+copyFileIfExists("package.json", publicPackageJson);
+copyFileIfExists("package-lock.json", publicLockfile);
+copyFileIfExists("next.config.mjs", publicNextConfig);
